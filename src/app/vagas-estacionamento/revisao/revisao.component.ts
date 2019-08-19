@@ -1,21 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WorkflowService } from '@seniorsistemas/workflow-cockpit-angular';
-
-import { UtilService } from 'src/app/services/util.service';
 import {
   FormComponent,
   FormConfig,
   FormData
 } from 'src/app/shared/form/form.component';
+import { WorkflowService } from '@seniorsistemas/workflow-cockpit-angular';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'app-solicitacao',
-  templateUrl: './solicitacao.component.html',
-  styleUrls: ['./solicitacao.component.css']
+  selector: 'app-revisao',
+  templateUrl: './revisao.component.html',
+  styleUrls: ['./revisao.component.css']
 })
-export class SolicitacaoComponent implements OnInit {
-  public revisao = false;
-
+export class RevisaoComponent implements OnInit {
   @ViewChild(FormComponent, { static: true })
   private formComponent: FormComponent;
 
@@ -27,35 +24,39 @@ export class SolicitacaoComponent implements OnInit {
   async ngOnInit() {
     const formConfig: FormConfig = {
       justificativa: {
-        show: false,
-        review: false
+        show: true,
+        review: true
       }
     };
 
     this.formComponent.updateFormConfig(formConfig);
-    await this.loadUserDataAndProfile();
-    this.workflowService.onSubmit(this.saveForm.bind(this));
-  }
+    const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
 
-  async loadUserDataAndProfile() {
-    const token = await this.workflowService.getToken();
-    const userData = await this.workflowService.requestUserData();
+    const {
+      colaborador_nome,
+      colaborador_cargo,
+      veiculo_nome,
+      veiculo_placa,
+      veiculo_ano,
+      justificativa,
+      solicitante
+    } = plataformDataAndVariables;
 
-    const response = await this.utilService.getProfile(userData.subject, token);
-
-    const formData: FormData = {
-      nome: userData.fullname,
-      cargo: response[0].TitRed,
-      solicitante: userData.subject,
-      justificativa: '',
+    const data: FormData = {
+      nome: colaborador_nome,
+      cargo: colaborador_cargo,
       veiculo: {
-        nome: '',
-        placa: '',
-        ano: null
-      }
+        nome: veiculo_nome,
+        placa: veiculo_placa,
+        ano: Number(veiculo_ano)
+      },
+      justificativa,
+      solicitante
     };
 
-    this.formComponent.updateFormData(formData);
+    this.formComponent.updateFormData(data);
+
+    this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
   saveForm() {

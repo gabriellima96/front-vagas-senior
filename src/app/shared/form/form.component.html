@@ -1,0 +1,81 @@
+<form [formGroup]="formGroup">
+  <h2>Dados do colaborador</h2>
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>
+        Nome
+        <input
+          type="text"
+          pInputText
+          readonly
+          formControlName="nome"
+          readonly
+        />
+      </label>
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>
+        Colaborador
+        <input
+          type="text"
+          pInputText
+          readonly
+          formControlName="cargo"
+          readonly
+        />
+      </label>
+    </div>
+  </div>
+  <h2>Dados do Veículo</h2>
+  <div class="ui-g" formGroupName="veiculo">
+    <div class="ui-g-4 ui-fluid">
+      <label>
+        Nome
+        <input
+          type="text"
+          pInputText
+          formControlName="nome"
+          [readonly]="
+            !formConfig.justificativa.review && formConfig.justificativa.show
+          "
+        />
+      </label>
+    </div>
+    <div class="ui-g-4 ui-fluid">
+      <label>
+        Placa
+        <p-inputMask
+          mask="aaaa-999"
+          formControlName="placa"
+          [readonly]="
+            !formConfig.justificativa.review && formConfig.justificativa.show
+          "
+        ></p-inputMask>
+      </label>
+    </div>
+    <div class="ui-g-3 ui-fluid">
+      <label>
+        Ano
+        <input
+          type="number"
+          pInputText
+          formControlName="ano"
+          [readonly]="
+            !formConfig.justificativa.review && formConfig.justificativa.show
+          "
+        />
+      </label>
+    </div>
+  </div>
+  <div class="ui-g-12 ui-fluid" *ngIf="formConfig.justificativa.show">
+    <label>
+      Justificativa
+      <textarea
+        pInputTextarea
+        formControlName="justificativa"
+        [readonly]="formConfig.justificativa.review"
+      >
+      </textarea>
+    </label>
+  </div>
+</form>

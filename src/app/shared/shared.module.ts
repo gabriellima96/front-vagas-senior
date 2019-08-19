@@ -1,21 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormComponent } from './form/form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { WorkflowModule } from '@seniorsistemas/workflow-cockpit-angular';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 
-import { UtilService } from '../services/util.service';
-
-import { ValidacaoComponent } from './validacao/validacao.component';
-import { SolicitacaoComponent } from './solicitacao/solicitacao.component';
-import { SharedModule } from '../shared/shared.module';
-import { RevisaoComponent } from './revisao/revisao.component';
-
 @NgModule({
-  declarations: [SolicitacaoComponent, ValidacaoComponent, RevisaoComponent],
+  declarations: [FormComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -23,9 +16,8 @@ import { RevisaoComponent } from './revisao/revisao.component';
     WorkflowModule,
     InputTextModule,
     InputMaskModule,
-    InputTextareaModule,
-    SharedModule
+    InputTextareaModule
   ],
-  providers: [UtilService]
+  exports: [FormComponent]
 })
-export class VagasEstacionamentoModule {}
+export class SharedModule {}

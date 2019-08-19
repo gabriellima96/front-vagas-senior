@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 
 import { VagasEstacionamentoModule } from './vagas-estacionamento/vagas-estacionamento.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -15,7 +16,8 @@ import { VagasEstacionamentoModule } from './vagas-estacionamento/vagas-estacion
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    VagasEstacionamentoModule
+    VagasEstacionamentoModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]

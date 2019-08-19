@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WorkflowService } from '@seniorsistemas/workflow-cockpit-angular';
 import { UtilService } from 'src/app/services/util.service';
+import {
+  FormComponent,
+  FormConfig,
+  FormData
+} from 'src/app/shared/form/form.component';
 
 @Component({
   selector: 'app-validacao',
@@ -9,25 +13,13 @@ import { UtilService } from 'src/app/services/util.service';
   styleUrls: ['./validacao.component.css']
 })
 export class ValidacaoComponent implements OnInit {
-  public formData: FormGroup;
+  @ViewChild(FormComponent, { static: true })
+  private formComponent: FormComponent;
 
   constructor(
-    private formBuilder: FormBuilder,
     private workflowService: WorkflowService,
     private utilService: UtilService
-  ) {
-    this.formData = this.formBuilder.group({
-      nome: [''],
-      cargo: [''],
-      veiculo: this.formBuilder.group({
-        nome: ['', Validators.required],
-        placa: ['', Validators.required],
-        ano: [null, Validators.required]
-      }),
-      justificativa: [''],
-      solicitante: ['', Validators.required]
-    });
-  }
+  ) {}
 
   async ngOnInit() {
     const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
@@ -41,49 +33,41 @@ export class ValidacaoComponent implements OnInit {
       solicitante
     } = plataformDataAndVariables;
 
-    this.updateFormData({
+    const formConfig: FormConfig = {
+      justificativa: {
+        show: true,
+        review: false
+      }
+    };
+
+    this.formComponent.updateFormConfig(formConfig);
+
+    const formData: FormData = {
       nome: colaborador_nome,
       cargo: colaborador_cargo,
       veiculo: {
         nome: veiculo_nome,
         placa: veiculo_placa,
-        ano: veiculo_ano
+        ano: Number(veiculo_ano)
       },
       justificativa,
       solicitante
-    });
+    };
+
+    this.formComponent.updateFormData(formData);
 
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
-  updateFormData(form) {
-    this.formData.patchValue({
-      nome: form.nome,
-      cargo: form.cargo,
-      veiculo: {
-        nome: form.veiculo.nome,
-        placa: form.veiculo.placa,
-        ano: form.veiculo.ano
-      },
-      justificativa: form.justificativa,
-      solicitante: form.solicitante
-    });
-  }
-
   async saveForm(processStep, info) {
     if (!processStep.nextAction.finish) {
-      const { justificativa } = this.formData.value;
+      this.formComponent.justificativaRequired();
 
-      this.formData.controls.justificativa.setValidators([Validators.required]);
-      this.formData.controls.justificativa.updateValueAndValidity();
-      this.formData.patchValue({
-        justificativa
-      });
-
-      if (this.formData.valid) {
+      if (this.formComponent.isValid()) {
+        const { justificativa } = this.formComponent.getData();
         return {
           formData: {
-            justificativa: this.formData.value.justificativa
+            justificativa
           }
         };
       } else {
@@ -94,19 +78,21 @@ export class ValidacaoComponent implements OnInit {
 
       const token = await this.workflowService.getToken();
 
-      const result = await this.utilService.postSaveForm(
+      const data = await this.formComponent.getData();
+
+      await this.utilService.postSaveForm(
         {
-          veiculoNome: this.formData.value.veiculo.nome,
-          veiculoPlaca: this.formData.value.veiculo.placa.replace('-', ''),
-          veiculoAno: this.formData.value.veiculo.ano,
-          solicitante: this.formData.value.solicitante
+          veiculoNome: data.veiculo.nome,
+          veiculoPlaca: data.veiculo.placa.replace('-', ''),
+          veiculoAno: data.veiculo.ano,
+          solicitante: data.solicitante
         },
         token
       );
 
       return {
         formData: {
-          justificativa: this.formData.value.justificativa
+          justificativa: data.justificativa
         }
       };
     }

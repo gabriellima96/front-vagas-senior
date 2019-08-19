@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormComponent } from './form/form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { WorkflowModule } from '@seniorsistemas/workflow-cockpit-angular';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+
+import { FormComponent } from './form/form.component';
 
 @NgModule({
   declarations: [FormComponent],
@@ -13,7 +14,6 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    WorkflowModule,
     InputTextModule,
     InputMaskModule,
     InputTextareaModule

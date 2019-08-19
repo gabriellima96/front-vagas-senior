@@ -1,25 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { WorkflowService } from '@seniorsistemas/workflow-cockpit-angular';
 
-export interface FormConfig {
-  justificativa: {
-    show: boolean;
-    review: boolean;
-  };
-}
-
-export interface FormData {
-  nome: string;
-  cargo: string;
-  veiculo: {
-    nome: string;
-    placa: string;
-    ano: number;
-  };
-  justificativa: string;
-  solicitante: string;
-}
+import { FormConfig } from './form-config';
+import { FormData } from './form-data';
 
 @Component({
   selector: 'app-form',

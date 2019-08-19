@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  FormComponent,
-  FormConfig,
-  FormData
-} from 'src/app/shared/form/form.component';
+
 import { WorkflowService } from '@seniorsistemas/workflow-cockpit-angular';
 import { UtilService } from 'src/app/services/util.service';
+import { FormComponent } from 'src/app/shared/form/form.component';
+import { FormConfig } from 'src/app/shared/form/form-config';
+import { FormData } from 'src/app/shared/form/form-data';
 
 @Component({
   selector: 'app-revisao',

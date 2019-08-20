@@ -60,10 +60,12 @@ export class ValidacaoComponent implements OnInit {
       this.utilService.handleError(error);
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
   async saveForm(processStep, info) {
+    this.formComponent.setLoading(true);
     if (!processStep.nextAction.finish) {
       this.formComponent.justificativaRequired();
 
@@ -106,6 +108,7 @@ export class ValidacaoComponent implements OnInit {
       }
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.abortSubmit();
   }
 }

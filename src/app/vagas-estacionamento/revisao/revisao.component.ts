@@ -62,10 +62,12 @@ export class RevisaoComponent implements OnInit {
       this.utilService.handleError(error);
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
   saveForm() {
+    this.formComponent.setLoading(true);
     if (this.formComponent.isValid()) {
       const data = this.formComponent.getData();
       return {
@@ -85,6 +87,7 @@ export class RevisaoComponent implements OnInit {
       );
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.abortSubmit();
   }
 }

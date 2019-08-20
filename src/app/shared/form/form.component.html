@@ -47,13 +47,14 @@
     <div class="ui-g-4 ui-fluid">
       <label>
         Placa
-        <p-inputMask
-          mask="aaaa-999"
+        <input
+          type="text"
+          pInputText
           formControlName="placa"
           [readonly]="
             !formConfig.justificativa.review && formConfig.justificativa.show
           "
-        ></p-inputMask>
+        />
       </label>
     </div>
     <div class="ui-g-3 ui-fluid">

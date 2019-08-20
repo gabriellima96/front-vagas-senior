@@ -40,6 +40,7 @@ export class SolicitacaoComponent implements OnInit {
       this.utilService.handleError(error);
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
@@ -65,6 +66,7 @@ export class SolicitacaoComponent implements OnInit {
   }
 
   saveForm() {
+    this.formComponent.setLoading(true);
     if (this.formComponent.isValid()) {
       const data = this.formComponent.getData();
       return {
@@ -84,6 +86,7 @@ export class SolicitacaoComponent implements OnInit {
       );
     }
 
+    this.formComponent.setLoading(false);
     this.workflowService.abortSubmit();
   }
 }

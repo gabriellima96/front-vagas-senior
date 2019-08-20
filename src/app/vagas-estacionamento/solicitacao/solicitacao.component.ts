@@ -5,6 +5,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { FormComponent } from 'src/app/shared/form/form.component';
 import { FormConfig } from 'src/app/shared/form/form-config';
 import { FormData } from 'src/app/shared/form/form-data';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-solicitacao',
@@ -19,7 +20,8 @@ export class SolicitacaoComponent implements OnInit {
 
   constructor(
     private workflowService: WorkflowService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private toastrService: ToastrService
   ) {}
 
   async ngOnInit() {
@@ -31,7 +33,13 @@ export class SolicitacaoComponent implements OnInit {
     };
 
     this.formComponent.updateFormConfig(formConfig);
-    await this.loadUserDataAndProfile();
+
+    try {
+      await this.loadUserDataAndProfile();
+    } catch (error) {
+      this.utilService.handleError(error);
+    }
+
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
 
@@ -70,8 +78,12 @@ export class SolicitacaoComponent implements OnInit {
         }
       };
     } else {
-      console.log('Ocorreu um erro no formulário');
-      this.workflowService.abortSubmit();
+      this.toastrService.error(
+        'Verifique todos os campos obrigatórios',
+        'Ocorreu um erro no formulário'
+      );
     }
+
+    this.workflowService.abortSubmit();
   }
 }

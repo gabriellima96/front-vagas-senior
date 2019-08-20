@@ -10,6 +10,7 @@ import { FormData } from './form-data';
   styleUrls: ['./form.component.css']
 })
 export class FormComponent implements OnInit {
+  private isLoading = true;
   private formGroup: FormGroup;
   public formConfig: FormConfig = {
     justificativa: {
@@ -70,6 +71,11 @@ export class FormComponent implements OnInit {
   }
 
   public isValid() {
+    this.formGroup.markAllAsTouched();
     return this.formGroup.valid;
+  }
+
+  public setLoading(value: boolean) {
+    this.isLoading = value;
   }
 }

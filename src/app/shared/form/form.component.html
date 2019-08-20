@@ -1,4 +1,7 @@
-<form [formGroup]="formGroup">
+<div *ngIf="isLoading" class="spinner">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<form [formGroup]="formGroup" *ngIf="!isLoading">
   <h2>Dados do colaborador</h2>
   <div class="ui-g">
     <div class="ui-g-12 ui-md-6 ui-fluid">

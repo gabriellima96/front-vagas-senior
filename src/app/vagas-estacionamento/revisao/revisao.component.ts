@@ -5,6 +5,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { FormComponent } from 'src/app/shared/form/form.component';
 import { FormConfig } from 'src/app/shared/form/form-config';
 import { FormData } from 'src/app/shared/form/form-data';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-revisao',
@@ -17,7 +18,8 @@ export class RevisaoComponent implements OnInit {
 
   constructor(
     private workflowService: WorkflowService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private toastrService: ToastrService
   ) {}
 
   async ngOnInit() {
@@ -29,31 +31,36 @@ export class RevisaoComponent implements OnInit {
     };
 
     this.formComponent.updateFormConfig(formConfig);
-    const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
 
-    const {
-      colaborador_nome,
-      colaborador_cargo,
-      veiculo_nome,
-      veiculo_placa,
-      veiculo_ano,
-      justificativa,
-      solicitante
-    } = plataformDataAndVariables;
+    try {
+      const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
 
-    const data: FormData = {
-      nome: colaborador_nome,
-      cargo: colaborador_cargo,
-      veiculo: {
-        nome: veiculo_nome,
-        placa: veiculo_placa,
-        ano: Number(veiculo_ano)
-      },
-      justificativa,
-      solicitante
-    };
+      const {
+        colaborador_nome,
+        colaborador_cargo,
+        veiculo_nome,
+        veiculo_placa,
+        veiculo_ano,
+        justificativa,
+        solicitante
+      } = plataformDataAndVariables;
 
-    this.formComponent.updateFormData(data);
+      const data: FormData = {
+        nome: colaborador_nome,
+        cargo: colaborador_cargo,
+        veiculo: {
+          nome: veiculo_nome,
+          placa: veiculo_placa,
+          ano: Number(veiculo_ano)
+        },
+        justificativa,
+        solicitante
+      };
+
+      this.formComponent.updateFormData(data);
+    } catch (error) {
+      this.utilService.handleError(error);
+    }
 
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
@@ -72,8 +79,12 @@ export class RevisaoComponent implements OnInit {
         }
       };
     } else {
-      console.log('Ocorreu um erro no formulário');
-      this.workflowService.abortSubmit();
+      this.toastrService.error(
+        'Verifique todos os campos obrigatórios',
+        'Ocorreu um erro no formulário'
+      );
     }
+
+    this.workflowService.abortSubmit();
   }
 }

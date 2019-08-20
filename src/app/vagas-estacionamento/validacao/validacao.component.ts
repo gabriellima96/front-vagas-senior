@@ -4,6 +4,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { FormComponent } from 'src/app/shared/form/form.component';
 import { FormConfig } from 'src/app/shared/form/form-config';
 import { FormData } from 'src/app/shared/form/form-data';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-validacao',
@@ -16,21 +17,11 @@ export class ValidacaoComponent implements OnInit {
 
   constructor(
     private workflowService: WorkflowService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private toastrService: ToastrService
   ) {}
 
   async ngOnInit() {
-    const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
-    const {
-      colaborador_nome,
-      colaborador_cargo,
-      veiculo_nome,
-      veiculo_placa,
-      veiculo_ano,
-      justificativa,
-      solicitante
-    } = plataformDataAndVariables;
-
     const formConfig: FormConfig = {
       justificativa: {
         show: true,
@@ -40,19 +31,34 @@ export class ValidacaoComponent implements OnInit {
 
     this.formComponent.updateFormConfig(formConfig);
 
-    const formData: FormData = {
-      nome: colaborador_nome,
-      cargo: colaborador_cargo,
-      veiculo: {
-        nome: veiculo_nome,
-        placa: veiculo_placa,
-        ano: Number(veiculo_ano)
-      },
-      justificativa,
-      solicitante
-    };
+    try {
+      const plataformDataAndVariables = await this.workflowService.requestPlatformDataAndVariables();
+      const {
+        colaborador_nome,
+        colaborador_cargo,
+        veiculo_nome,
+        veiculo_placa,
+        veiculo_ano,
+        justificativa,
+        solicitante
+      } = plataformDataAndVariables;
 
-    this.formComponent.updateFormData(formData);
+      const formData: FormData = {
+        nome: colaborador_nome,
+        cargo: colaborador_cargo,
+        veiculo: {
+          nome: veiculo_nome,
+          placa: veiculo_placa,
+          ano: Number(veiculo_ano)
+        },
+        justificativa,
+        solicitante
+      };
+
+      this.formComponent.updateFormData(formData);
+    } catch (error) {
+      this.utilService.handleError(error);
+    }
 
     this.workflowService.onSubmit(this.saveForm.bind(this));
   }
@@ -69,30 +75,35 @@ export class ValidacaoComponent implements OnInit {
           }
         };
       } else {
-        console.log('Ocorreu um error no formulário');
+        this.toastrService.error(
+          'Justificativa é obrigátorio caso o veículo seja reprovado!',
+          'Ocorreu um erro no formulário'
+        );
       }
     } else {
-      console.log('Inserir os dados na tabela customizada');
+      try {
+        const token = await this.workflowService.getToken();
 
-      const token = await this.workflowService.getToken();
+        const data = await this.formComponent.getData();
 
-      const data = await this.formComponent.getData();
+        await this.utilService.postSaveForm(
+          {
+            veiculoNome: data.veiculo.nome,
+            veiculoPlaca: data.veiculo.placa.replace('-', ''),
+            veiculoAno: data.veiculo.ano,
+            solicitante: data.solicitante
+          },
+          token
+        );
 
-      await this.utilService.postSaveForm(
-        {
-          veiculoNome: data.veiculo.nome,
-          veiculoPlaca: data.veiculo.placa.replace('-', ''),
-          veiculoAno: data.veiculo.ano,
-          solicitante: data.solicitante
-        },
-        token
-      );
-
-      return {
-        formData: {
-          justificativa: data.justificativa
-        }
-      };
+        return {
+          formData: {
+            justificativa: data.justificativa
+          }
+        };
+      } catch (error) {
+        this.utilService.handleError(error);
+      }
     }
 
     this.workflowService.abortSubmit();

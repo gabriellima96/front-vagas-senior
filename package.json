@@ -22,6 +22,7 @@
     "@seniorsistemas/workflow-cockpit": "^2.0.7",
     "@seniorsistemas/workflow-cockpit-angular": "^1.1.3",
     "moment": "^2.24.0",
+    "ngx-toastr": "^10.1.0",
     "primeicons": "^2.0.0",
     "primeng": "^8.0.2",
     "rxjs": "~6.4.0",

@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from 'src/environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private toastrService: ToastrService) {}
 
   getProfile(user: string, token: string) {
     return this.http
@@ -27,5 +28,10 @@ export class UtilService {
         })
       })
       .toPromise();
+  }
+
+  handleError(error: any) {
+    console.log(error);
+    this.toastrService.error('Ocorreu um erro', 'Tente novamene mais tarde!');
   }
 }

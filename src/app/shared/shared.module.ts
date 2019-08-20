@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { FormComponent } from './form/form.component';
 
@@ -16,7 +17,8 @@ import { FormComponent } from './form/form.component';
     ReactiveFormsModule,
     InputTextModule,
     InputMaskModule,
-    InputTextareaModule
+    InputTextareaModule,
+    ProgressSpinnerModule
   ],
   exports: [FormComponent]
 })

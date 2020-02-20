@@ -30,6 +30,10 @@ export class UtilService {
       .toPromise();
   }
 
+  startProcess(obj) {
+    return this.http.post(environment.api.startProcess, obj).toPromise();
+  }
+
   handleError(error: any) {
     console.log(error);
     this.toastrService.error('Ocorreu um erro', 'Tente novamene mais tarde!');
